@@ -1,0 +1,89 @@
+{
+  "name": "charity-coin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
+    "preview": "vite preview",
+    "verify:raffle": "node scripts/verify-raffle-state.js",
+    "fix:profiles": "node scripts/fix-user-profiles.js",
+    "fix:profile": "node scripts/fix-user-profiles.js",
+    "fix:profiles:client": "node scripts/fix-user-profiles-client.js",
+    "fix:profile:client": "node scripts/fix-user-profiles-client.js",
+    "validate:wallets": "node scripts/validate-wallet-addresses.js",
+    "validate:wallets:fix": "node scripts/validate-wallet-addresses.js --fix",
+    "validate:wallets:client": "node scripts/validate-wallet-addresses-client.js",
+    "validate:wallets:client:fix": "node scripts/validate-wallet-addresses-client.js --fix"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.4",
+    "@heroicons/react": "^2.2.0",
+    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
+    "@solana/spl-token": "^0.4.13",
+    "@solana/wallet-adapter-base": "^0.9.27",
+    "@solana/wallet-adapter-react": "^0.15.39",
+    "@solana/wallet-adapter-react-ui": "^0.9.39",
+    "@solana/wallet-adapter-wallets": "^0.19.37",
+    "@solana/web3.js": "^1.98.2",
+    "@switchboard-xyz/solana.js": "^3.2.5",
+    "@tailwindcss/vite": "^4.1.11",
+    "@vitejs/plugin-react": "^4.7.0",
+    "bs58": "^6.0.0",
+    "buffer": "^6.0.3",
+    "crypto-js": "^4.2.0",
+    "firebase": "^12.0.0",
+    "lucide-react": "^0.533.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "react-router-dom": "^7.7.1",
+    "resend": "^6.4.0",
+    "zustand": "^5.0.6",
+    "firebase-admin": "^13.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.11",
+    "vite": "^7.0.6",
+    "vite-plugin-node-polyfills": "^0.24.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HelpKeepMyMoney/Charity-Coin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HelpKeepMyMoney/Charity-Coin/issues"
+  },
+  "homepage": "https://github.com/HelpKeepMyMoney/Charity-Coin#readme"
+}

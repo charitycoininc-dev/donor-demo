@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frank's Web Development Guide</title>
+    
+    <!-- Import Maps for ES Modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+            "vue-router": "https://unpkg.com/vue-router@4/dist/vue-router.esm-browser.js",
+            "@vue/devtools-api": "https://unpkg.com/@vue/devtools-api@6/lib/esm/index.js",
+            "markdown-it": "https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm",
+            "highlight.js/core": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/es/core.min.js",
+            "highlight.js/lang-js": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/es/languages/javascript.min.js",
+            "highlight.js/lang-html": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/es/languages/xml.min.js",
+            "highlight.js/lang-css": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/es/languages/css.min.js",
+            "highlight.js/lang-bash": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/es/languages/bash.min.js",
+            "highlight.js/lang-json": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/es/languages/json.min.js"
+        }
+    }
+    </script>
+    
+    <!-- Google Fonts - Unbounded -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- GitHub Markdown CSS (for lesson content only) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown-light.css">
+    
+    <!-- Highlight.js CSS for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Helvetica, Arial, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Subtle dot grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, #00000008 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Main app container */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            min-height: 100vh;
+        }
+        
+        /* Header styling */
+        .main-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        
+        .main-header h1 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 600;
+            margin: 0 0 16px 0;
+            color: #000000;
+            letter-spacing: -0.02em;
+        }
+        
+        .main-header .subtitle {
+            font-size: 1.2rem;
+            color: #666666;
+            font-weight: 400;
+            margin: 0;
+        }
+        
+        /* Logo styling */
+        .site-logo {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #000000;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        
+        .site-logo:hover {
+            opacity: 0.7;
+        }
+        
+        .site-logo i {
+            margin-right: 12px;
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            margin: 0 0 60px 0;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background-color: #f0f0f0;
+            border-radius: 0;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #000000;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: #666666;
+            font-weight: 500;
+        }
+        
+        /* Info section */
+        .info-section {
+            background: #f8f8f8;
+            padding: 32px;
+            margin: 0 0 60px 0;
+            text-align: center;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .info-section h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin: 0 0 16px 0;
+            color: #000000;
+        }
+        
+        .info-section p {
+            color: #333333;
+            font-size: 15px;
+            margin: 0 0 12px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .info-section p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-section code {
+            background: #000000;
+            color: #ffffff;
+            padding: 2px 8px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+        }
+        
+        /* Lesson grid */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
+            margin-top: 40px;
+        }
+        
+        /* Lesson cards */
+        .lesson-card {
+            background: #ffffff;
+            border: 2px solid #000000;
+            padding: 32px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .lesson-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 8px 8px 0px #000000;
+        }
+        
+        .lesson-card.completed {
+            background: #f8f8f8;
+        }
+        
+        .lesson-card.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 16px;
+        }
+        
+        .lesson-title {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #000000;
+            text-decoration: none;
+            margin: 0;
+            line-height: 1.3;
+            flex: 1;
+        }
+        
+        .lesson-title:hover {
+            text-decoration: none;
+        }
+        
+        .lesson-number {
+            background: #000000;
+            color: #ffffff;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'SF Mono', Monaco, monospace;
+            flex-shrink: 0;
+        }
+        
+        .lesson-description {
+            color: #333333;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        
+        .lesson-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #666666;
+            font-weight: 500;
+        }
+        
+        .lesson-meta label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        /* Custom checkbox styling */
+        .completion-checkbox {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #000000;
+            background: #ffffff;
+            margin-right: 8px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .completion-checkbox:checked {
+            background: #000000;
+        }
+        
+        .completion-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: -2px;
+            left: 2px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .completion-checkbox:hover {
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Loading and error states */
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+            color: #666666;
+            font-size: 16px;
+        }
+        
+        .error {
+            background: #ffffff;
+            border: 2px solid #000000;
+            padding: 24px;
+            color: #000000;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        /* Lesson view back button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 40px;
+        }
+        
+        .back-button:hover {
+            background: #333333;
+        }
+        
+        .lesson-content-container {
+            padding-top: 40px;
+        }
+        
+        /* Lesson navigation footer */
+        .lesson-footer {
+            margin-top: 80px;
+            padding: 40px 0;
+            border-top: 2px solid #e8e8e8;
+        }
+        
+        .lesson-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 20px;
+        }
+        
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            background: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            min-width: 120px;
+            justify-content: center;
+        }
+        
+        .nav-button:hover {
+            background: #000000;
+            color: #ffffff;
+        }
+        
+        .nav-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .nav-button:disabled:hover {
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .complete-section {
+            text-align: center;
+            padding: 32px;
+            background: #f8f8f8;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .complete-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 16px 32px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .complete-button:hover {
+            background: #333333;
+        }
+        
+        .complete-button.completed {
+            background: #666666;
+        }
+        
+        .complete-text {
+            margin-bottom: 20px;
+            color: #333333;
+            font-size: 15px;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 40px 20px;
+            }
+            
+            .main-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .lesson-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .lesson-card {
+                padding: 24px;
+            }
+            
+            .lesson-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .lesson-number {
+                align-self: flex-end;
+            }
+            
+            .lesson-navigation {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .nav-button {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-header h1 {
+                font-size: 2rem;
+            }
+            
+            .lesson-card {
+                padding: 20px;
+            }
+            
+            .site-logo {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="loading">Loading Vue application...</div>
+    </div>
+
+    <script type="module">
+        import { createApp, reactive } from 'vue';
+        import { createRouter, createWebHashHistory } from 'vue-router';
+        import markdownit from 'markdown-it';
+        import hljs from 'highlight.js/core';
+        import javascript from 'highlight.js/lang-js';
+        import html from 'highlight.js/lang-html';
+        import css from 'highlight.js/lang-css';
+        import bash from 'highlight.js/lang-bash';
+        import json from 'highlight.js/lang-json';
+
+        // Register languages with highlight.js
+        hljs.registerLanguage('javascript', javascript);
+        hljs.registerLanguage('html', html);
+        hljs.registerLanguage('css', css);
+        hljs.registerLanguage('bash', bash);
+        hljs.registerLanguage('json', json);
+
+        // Initialize markdown parser with syntax highlighting
+        const md = markdownit({
+            html: true,
+            linkify: true,
+            typographer: true,
+            highlight: function (str, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    try {
+                        return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang }).value}</code></pre>`;
+                    } catch (__) {}
+                }
+                return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
+            }
+        });
+
+        // Global state composable for progress and lessons
+        const useProgress = () => {
+            const PROGRESS_KEY = 'franks-guide-progress';
+            
+            const state = reactive({
+                lessons: [
+                    { file: '01-intro.md', title: "Frank's Web Development Guide", subtitle: "Navigate the web development mess with confidence" },
+                    { file: '02-html-foundations.md', title: "HTML Foundations", subtitle: "Structure the web with semantic markup" },
+                    { file: '03-css-styling.md', title: "CSS Styling", subtitle: "Make websites look professional" },
+                    { file: '04-javascript-basics.md', title: "JavaScript Basics", subtitle: "Add interactivity and dynamic behavior" },
+                    { file: '05-terminal-and-tools.md', title: "Terminal & Tools", subtitle: "Navigate your computer and install software like a developer" },
+                    { file: '06-complete-website-project.md', title: "Complete Website Project", subtitle: "Build your first real website with HTML, CSS, and JavaScript" },
+                    { file: '07-vue-framework-basics.md', title: "Vue Framework Basics", subtitle: "Solve the JavaScript state problem with reactive frameworks" },
+                    { file: '08-global-state-and-vue-routing.md', title: "Global State & Vue Routing", subtitle: "Learn to share data between components and build multi-page applications" },
+                    { file: '09-javascript-data-manipulation.md', title: "JavaScript Data Manipulation", subtitle: "Master the language that powers the modern web" },
+                    { file: '10-nodejs-backend.md', title: "Node.js Backend", subtitle: "Build server-side applications" },
+                    { file: '11-express-apis.md', title: "Express APIs", subtitle: "Create RESTful web services" },
+                    { file: '12-sqlite-database.md', title: "SQLite Database", subtitle: "Store and manage data persistently" },
+                    { file: '13-final-project.md', title: "Final Project", subtitle: "Bring everything together in a complete application" }
+                ],
+                progress: {},
+                loading: false
+            });
+
+            const loadProgress = () => {
+                const saved = localStorage.getItem(PROGRESS_KEY);
+                state.progress = saved ? JSON.parse(saved) : {};
+            };
+
+            const saveProgress = (lessonId, completed) => {
+                state.progress[lessonId] = completed;
+                localStorage.setItem(PROGRESS_KEY, JSON.stringify(state.progress));
+            };
+
+            const getCompletedCount = () => {
+                return Object.values(state.progress).filter(Boolean).length;
+            };
+
+            const getProgressPercentage = () => {
+                return Math.round((getCompletedCount() / state.lessons.length) * 100);
+            };
+
+            const extractLessonDescription = (content) => {
+                const lines = content.split('\n');
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.startsWith('> ')) {
+                        return line.substring(2);
+                    }
+                }
+                
+                const paragraphMatch = content.match(/\n\n([^#\n>][^\n]*)/);
+                if (paragraphMatch) {
+                    return paragraphMatch[1].substring(0, 150) + '...';
+                }
+                
+                return 'Learn essential web development concepts';
+            };
+
+            const fetchLessonContent = async (filename) => {
+                try {
+                    const response = await fetch(filename);
+                    if (!response.ok) throw new Error(`Failed to fetch ${filename}`);
+                    return await response.text();
+                } catch (error) {
+                    console.error(`Error fetching ${filename}:`, error);
+                    return null;
+                }
+            };
+
+            const getLessonIndex = (filename) => {
+                return state.lessons.findIndex(lesson => lesson.file === filename);
+            };
+
+            const getPreviousLesson = (filename) => {
+                const index = getLessonIndex(filename);
+                return index > 0 ? state.lessons[index - 1] : null;
+            };
+
+            const getNextLesson = (filename) => {
+                const index = getLessonIndex(filename);
+                return index < state.lessons.length - 1 ? state.lessons[index + 1] : null;
+            };
+
+            const getCurrentLesson = (filename) => {
+                return state.lessons.find(lesson => lesson.file === filename);
+            };
+
+            return {
+                state,
+                loadProgress,
+                saveProgress,
+                getCompletedCount,
+                getProgressPercentage,
+                extractLessonDescription,
+                fetchLessonContent,
+                getLessonIndex,
+                getPreviousLesson,
+                getNextLesson,
+                getCurrentLesson
+            };
+        };
+
+        // Home Component - Lesson Grid
+        const HomeComponent = {
+            data() {
+                const { state, loadProgress, saveProgress, getCompletedCount, getProgressPercentage, extractLessonDescription, fetchLessonContent } = useProgress();
+                return {
+                    state,
+                    loadProgress,
+                    saveProgress,
+                    getCompletedCount,
+                    getProgressPercentage,
+                    extractLessonDescription,
+                    fetchLessonContent,
+                    lessonDescriptions: {}
+                };
+            },
+            async mounted() {
+                this.loadProgress();
+                await this.loadLessonDescriptions();
+            },
+            methods: {
+                async loadLessonDescriptions() {
+                    this.state.loading = true;
+                    try {
+                        for (const lesson of this.state.lessons) {
+                            const content = await this.fetchLessonContent(lesson.file);
+                            if (content) {
+                                this.lessonDescriptions[lesson.file] = this.extractLessonDescription(content);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error loading lesson descriptions:', error);
+                    } finally {
+                        this.state.loading = false;
+                    }
+                },
+                toggleCompletion(lessonFile, completed) {
+                    this.saveProgress(lessonFile, completed);
+                },
+                navigateToLesson(lessonFile) {
+                    this.$router.push(`/lesson/${lessonFile}`);
+                }
+            },
+            template: `
+                <div class="app-container">
+                    <div class="main-header" style="margin-bottom: 40px;">
+                        <a href="#/" class="site-logo"><i class="fas fa-book-open"></i> Frank's Guide</a>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" :style="{ width: getProgressPercentage() + '%' }"></div>
+                        </div>
+                        <div class="progress-text">{{ getCompletedCount() }} of {{ state.lessons.length }} lessons completed ({{ getProgressPercentage() }}%)</div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3>How to Use This Guide</h3>
+                        <p>Each lesson combines theory, practice, and real-world application. Click on any lesson card to start reading, then check off lessons as you complete them to track your progress!</p>
+                        <p><strong>Pro tip:</strong> Use <code>npx serve .</code> in the terminal to serve this guide locally for the best experience.</p>
+                    </div>
+                    
+                    <div v-if="state.loading" class="loading">Loading lessons...</div>
+                    
+                    <div v-else class="lesson-grid">
+                        <div v-for="(lesson, index) in state.lessons" 
+                             :key="lesson.file"
+                             class="lesson-card"
+                             :class="{ completed: state.progress[lesson.file] }"
+                             @click="navigateToLesson(lesson.file)">
+                            <div class="lesson-header">
+                                <a href="#" @click.prevent class="lesson-title">{{ lesson.title }}</a>
+                                <span class="lesson-number">{{ String(index + 1).padStart(2, '0') }}</span>
+                            </div>
+                            <div class="lesson-description">{{ lessonDescriptions[lesson.file] || lesson.subtitle }}</div>
+                            <div class="lesson-meta" @click.stop>
+                                <label>
+                                    <input type="checkbox" 
+                                           class="completion-checkbox"
+                                           :checked="state.progress[lesson.file]"
+                                           @change="toggleCompletion(lesson.file, $event.target.checked)">
+                                    Mark as completed
+                                </label>
+                                <span>Lesson {{ index + 1 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        // Lesson Component - Individual Lesson Viewer
+        const LessonComponent = {
+            data() {
+                const { state, loadProgress, saveProgress, getPreviousLesson, getNextLesson, getCurrentLesson } = useProgress();
+                return {
+                    content: '',
+                    loading: true,
+                    error: null,
+                    state,
+                    loadProgress,
+                    saveProgress,
+                    getPreviousLesson,
+                    getNextLesson,
+                    getCurrentLesson
+                };
+            },
+            async mounted() {
+                this.loadProgress();
+                await this.loadLesson();
+            },
+            watch: {
+                async '$route'() {
+                    // Reload lesson content when route changes
+                    await this.loadLesson();
+                }
+            },
+            computed: {
+                currentFilename() {
+                    return this.$route.params.filename;
+                },
+                currentLesson() {
+                    return this.getCurrentLesson(this.currentFilename);
+                },
+                previousLesson() {
+                    return this.getPreviousLesson(this.currentFilename);
+                },
+                nextLesson() {
+                    return this.getNextLesson(this.currentFilename);
+                },
+                isCompleted() {
+                    return this.state.progress[this.currentFilename] || false;
+                }
+            },
+            methods: {
+                async loadLesson() {
+                    this.loading = true;
+                    this.error = null;
+                    
+                    try {
+                        const filename = this.$route.params.filename;
+                        const response = await fetch(filename);
+                        
+                        if (!response.ok) {
+                            throw new Error(`Failed to load lesson: ${filename}`);
+                        }
+                        
+                        const markdownContent = await response.text();
+                        this.content = md.render(markdownContent);
+                    } catch (error) {
+                        console.error('Error loading lesson:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                goHome() {
+                    this.$router.push('/');
+                },
+                goToPrevious() {
+                    if (this.previousLesson) {
+                        this.$router.push(`/lesson/${this.previousLesson.file}`);
+                    }
+                },
+                goToNext() {
+                    if (this.nextLesson) {
+                        this.$router.push(`/lesson/${this.nextLesson.file}`);
+                    }
+                },
+                toggleCompletion() {
+                    this.saveProgress(this.currentFilename, !this.isCompleted);
+                }
+            },
+            template: `
+                <div class="app-container">
+                    <div class="main-header" style="margin-bottom: 40px;">
+                        <a @click="goHome" class="site-logo"><i class="fas fa-book-open"></i> Frank's Guide</a>
+                    </div>
+                    
+                    <div v-if="loading" class="loading">
+                        Loading lesson...
+                    </div>
+                    
+                    <div v-else-if="error" class="error">
+                        {{ error }}
+                    </div>
+                    
+                    <div v-else>
+                        <div class="lesson-content-container">
+                            <div class="markdown-body" v-html="content"></div>
+                        </div>
+                        
+                        <div class="lesson-footer">
+                            <div class="lesson-navigation">
+                                <button 
+                                    @click="goToPrevious" 
+                                    class="nav-button"
+                                    :disabled="!previousLesson">
+                                    ← {{ previousLesson ? previousLesson.title : 'Previous' }}
+                                </button>
+                                
+                                <button 
+                                    @click="goToNext" 
+                                    class="nav-button"
+                                    :disabled="!nextLesson">
+                                    {{ nextLesson ? nextLesson.title : 'Next' }} →
+                                </button>
+                            </div>
+                            
+                            <div class="complete-section">
+                                <div class="complete-text">
+                                    {{ isCompleted ? 'Lesson completed! Great work.' : 'Mark this lesson as complete when you are done.' }}
+                                </div>
+                                <button 
+                                    @click="toggleCompletion" 
+                                    class="complete-button"
+                                    :class="{ completed: isCompleted }">
+                                    {{ isCompleted ? '✓ Completed' : 'Mark as Complete' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        // Router setup
+        const routes = [
+            { path: '/', component: HomeComponent },
+            { path: '/lesson/:filename', component: LessonComponent }
+        ];
+
+        const router = createRouter({
+            history: createWebHashHistory(),
+            routes
+        });
+
+        // Main App
+        const app = createApp({
+            template: `
+                <div>
+                    <router-view></router-view>
+                </div>
+            `
+        });
+
+        app.use(router);
+        app.mount('#app');
+
+        console.log('Frank\'s Vue Guide loaded successfully');
+    </script>
+</body>
+</html>

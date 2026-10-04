@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme {
+  /* Deep Red Color Palette */
+  --color-deep-red-50: #fdf2f2;
+  --color-deep-red-100: #fde8e8;
+  --color-deep-red-200: #fbd5d5;
+  --color-deep-red-300: #f8b4b4;
+  --color-deep-red-400: #f98080;
+  --color-deep-red-500: #f05252;
+  --color-deep-red-600: #e02424;
+  --color-deep-red-700: #c81e1e;
+  --color-deep-red-800: #9b1c1c;
+  --color-deep-red-900: #771d1d;
+
+  /* Gold Color Palette */
+  --color-gold-50: #fffbeb;
+  --color-gold-100: #fef3c7;
+  --color-gold-200: #fde68a;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+  --color-gold-600: #d97706;
+  --color-gold-700: #b45309;
+  --color-gold-800: #92400e;
+  --color-gold-900: #78350f;
+
+  /* Cream Color */
+  --color-cream: #faf6f1;
+
+  /* Custom Animations */
+  --animate-fade-in: fadeIn 0.5s ease-in-out;
+  --animate-slide-up: slideUp 0.5s ease-out;
+  --animate-bounce-gentle: bounceGentle 1s infinite;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceGentle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  --wallet-adapter-button-background: #6d28d9 !important;
+  --wallet-adapter-button-background-hover: #5b21b6 !important;
+  --wallet-adapter-button-color: #fff !important;
+  --wallet-adapter-button-border-radius: 0.5rem !important;
+  --wallet-adapter-button-font-weight: bold !important;
+  --wallet-adapter-button-font-size: 1.15rem !important;
+  --wallet-adapter-button-padding: 0.75rem 2.25rem !important;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+.wallet-adapter-button,
+.wallet-adapter-button-trigger {
+  background-color: #6d28d9 !important; /* purple-700 */
+  color: #fff !important;
+  font-weight: bold !important;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 1.25rem !important;
+  font-size: 1rem !important;
+  border: none !important;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+  transition: background 0.2s;
+}
+.wallet-adapter-button:hover,
+.wallet-adapter-button-trigger:hover {
+  background-color: #5b21b6 !important; /* purple-800 */
+}

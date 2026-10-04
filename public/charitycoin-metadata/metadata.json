@@ -1,0 +1,16 @@
+{
+    "name": "Charity Coin",
+        "symbol": "$CHARITY",
+            "description": "Charity Coin is a token used to support nonprofit raffles.",
+                "image": "https://your-domain.vercel.app/logo.png",
+                    "external_url": "https://charitycoin.org",
+                        "properties": {
+        "files": [
+            {
+                "uri": "https://your-domain.vercel.app/logo.png",
+                "type": "image/png"
+            }
+        ]
+    }
+}
+// JavaScript source code

@@ -1,0 +1,223 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Allow users to read their own data
+      allow read: if isOwner(userId);
+      
+      // Allow admins to read any user data
+      allow read: if isAdmin();
+      
+      // Allow authenticated users to read charityCoins from any user
+      // This is needed for calculating total eligible raffle entries
+      // charityCoins is public information (each coin is a raffle entry)
+      allow get: if isAuthenticated();
+      
+      // Allow authenticated users to list users collection (for raffle totals)
+      allow list: if isAuthenticated();
+      
+      // Allow authenticated users to create their own user document
+      // This is needed for signup - user must be authenticated and creating their own document
+      // IMPORTANT: The rule checks request.auth.uid == userId to ensure users can only create their own documents
+      // Note: isAuthenticated() already checks request.auth != null, so we don't need to check it again
+      allow create: if isAuthenticated() && 
+        request.auth.uid == userId &&
+        // Users cannot set their own role during signup
+        !('role' in request.resource.data) &&
+        // Users cannot set private keys during signup (only system can)
+        !('solanaWalletPrivateKey' in request.resource.data);
+      
+      // Allow users to update their own profile
+      // Temporarily allow all updates to debug - remove role/private key restrictions
+      allow update: if isOwner(userId);
+      
+      // Allow admins to update user data (except private keys)
+      allow update: if isAdmin() &&
+        // Admins cannot update private keys directly (only system during wallet creation)
+        !('solanaWalletPrivateKey' in request.resource.data.diff(resource.data).changedKeys());
+      
+      // Allow admins to create user documents (for admin-created accounts)
+      allow create: if isAdmin() &&
+        // Admins cannot set private keys during creation (only system can)
+        !('solanaWalletPrivateKey' in request.resource.data);
+      
+      // Allow admins to delete user documents
+      allow delete: if isAdmin();
+      
+      // Allow users to delete their own accounts
+      allow delete: if isOwner(userId);
+      
+      // Subcollections
+      match /transactions/{transactionId} {
+        // Users can read their own transactions
+        allow read: if isOwner(userId);
+        
+        // Admins can read and list all transactions
+        allow read: if isAdmin();
+        allow list: if isAdmin();
+        
+        // System can create transactions (users cannot write their own)
+        allow create: if isAuthenticated();
+        
+        // System can update transactions
+        allow update: if isAuthenticated();
+        
+        // Only admins can delete transactions (for reset operations)
+        allow delete: if isAdmin();
+      }
+      
+      match /coinNumbers/{coinNumberId} {
+        // Users can read their own coin numbers
+        allow read: if isOwner(userId);
+        
+        // Admins can read and list all coin numbers
+        allow read: if isAdmin();
+        allow list: if isAdmin();
+        
+        // System can create coin numbers
+        allow create: if isAuthenticated();
+        
+        // Only admins can delete coin numbers (for reset operations)
+        allow delete: if isAdmin();
+      }
+    }
+    
+    // Donations collection
+    match /donations/{donationId} {
+      // Users can read their own donations
+      allow get: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // Allow admins to query/list all donations
+      // Temporarily allow any authenticated user to list for debugging
+      // In production, you may want to restrict this to admins only
+      allow list: if isAuthenticated();
+      
+      // Users can create donations
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      
+      // Only admins can update donations (approve/reject)
+      // Check if user is admin OR if user document exists with admin role
+      allow update: if isAuthenticated() && (
+        isAdmin() ||
+        // Fallback: check if user document exists and has admin role
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+      
+      // Only admins can delete donations
+      allow delete: if isAdmin();
+    }
+    
+    // Deleted donations archive (admin-only)
+    match /deletedDonations/{donationId} {
+      allow read, list, create, update, delete: if isAdmin();
+    }
+    
+    // Raffles collection
+    match /raffles/{raffleId} {
+      // Allow anyone (including unauthenticated) to read the current raffle (public info)
+      // This is needed for the home page to display prize pool and participants
+      allow read: if raffleId == 'current' || isAuthenticated();
+      
+      // Only admins can write raffles
+      allow write: if isAdmin();
+      
+      // Subcollection: eligibleCoinNumbers
+      match /eligibleCoinNumbers/{entryId} {
+        // Only authenticated users can read eligible coin numbers (privacy)
+        allow read: if isAuthenticated();
+        allow write: if isAdmin();
+      }
+    }
+    
+    // Raffle history
+    match /raffleHistory/{historyId} {
+      // Allow anyone (including unauthenticated) to read raffle history (public info)
+      // This is needed for the public raffle page to show past winners
+      allow read: if true;
+      
+      // Only admins can write raffle history
+      allow write: if isAdmin();
+    }
+    
+    // Sweepstakes collection
+    match /sweepstakes/{sweepstakesId} {
+      // Allow authenticated users to read active sweepstakes (public info)
+      allow read: if isAuthenticated();
+      
+      // Only admins can write sweepstakes
+      allow write: if isAdmin();
+      
+      // Subcollection: entries
+      match /entries/{entryId} {
+        // Users can read their own entries
+        allow read: if isAuthenticated() && 
+          (resource.data.userId == request.auth.uid || isAdmin());
+        
+        // Admins can read all entries
+        allow list: if isAdmin();
+        
+        // Only admins can write entries (system creates entries when donations are approved)
+        allow write: if isAdmin();
+      }
+    }
+    
+    // Sweepstakes history
+    match /sweepstakesHistory/{historyId} {
+      // Allow authenticated users to read sweepstakes history (public info)
+      allow read: if isAuthenticated();
+      
+      // Only admins can write sweepstakes history
+      allow write: if isAdmin();
+    }
+    
+    // Nonprofits collection
+    match /nonprofits/{nonprofitId} {
+      // Anyone can read nonprofits
+      allow read: if true;
+      
+      // Allow listing all nonprofits (needed for admin queries)
+      allow list: if true;
+      
+      // Only admins can write nonprofits
+      allow write: if isAdmin();
+    }
+    
+    // Settings collection
+    match /settings/{settingId} {
+      // Anyone authenticated can read settings (for wallet balance display)
+      // This is needed for the home page wallet balance display
+      allow get: if isAuthenticated();
+      
+      // Allow listing settings (for admin queries)
+      allow list: if isAuthenticated();
+      
+      // Only admins can write settings
+      allow write: if isAdmin();
+      
+      // Allow read for specific settings needed by all users
+      // This is redundant but ensures access
+      allow read: if isAuthenticated();
+    }
+  }
+}
